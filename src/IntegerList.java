@@ -1,32 +1,32 @@
-public class StringListImpl implements StringList {
+public class IntegerList implements List {
 
-    private String[] list;
+    private Integer[] list;
     private int size = 0;
 
-    public StringListImpl(int sizeList) {
-        list = new String[sizeList];
+    public IntegerList(int sizeList) {
+        list = new Integer[sizeList];
     }
 
     @Override
-    public String add(String item) {
-        validationString(item);
+    public Integer add(Integer item) {
+        validationInteger(item);
 
         if (size < list.length) {
             list[size] = item;
         } else {
-            String[] temp = list;
-            list = new String[size * 2];
+            Integer[] temp = list;
+            list = new Integer[size * 2];
             System.arraycopy(temp, 0, list, 0, temp.length);
             list[size] = item;
         }
 
         size++;
-        return item;
+        return list[size];
     }
 
     @Override
-    public String add(int index, String item) {
-        validationString(item);
+    public Integer add(int index, Integer item) {
+        validationInteger(item);
         validationIndex(index);
 
         for (int i = size; i > index; i--) {
@@ -38,16 +38,16 @@ public class StringListImpl implements StringList {
     }
 
     @Override
-    public String set(int index, String item) {
-        validationString(item);
+    public Integer set(int index, Integer item) {
+        validationInteger(item);
         validationIndex(index);
 
         return list[index] = item;
     }
 
     @Override
-    public String remove(String item) {
-        validationString(item);
+    public Integer remove(Integer item) {
+        validationInteger(item);
 
         boolean found = false;
         for (int i = 0; i < size; i++) {
@@ -73,10 +73,10 @@ public class StringListImpl implements StringList {
     }
 
     @Override
-    public String remove(int index) {
+    public Integer remove(int index) {
         validationIndex(index);
 
-        String result = list[index];
+        Integer result = list[index];
         list[index] = null;
 
         for (int i = index; i < size; i++) {
@@ -88,20 +88,30 @@ public class StringListImpl implements StringList {
     }
 
     @Override
-    public boolean contains(String item) {
-        validationString(item);
+    public boolean contains(Integer item) {
+        validationInteger(item);
+        sort(list, 0, size);
 
-        for (int i = 0; i < size; i++) {
-            if (list[i].equals(item)) {
+        int min = 0;
+        int max = size;
+
+        while (min <= max) {
+            int mid = (min + max) / 2;
+            if (item.equals(list[mid])) {
                 return true;
+            }
+            if (item < list[mid]) {
+                max = mid - 1;
+            } else {
+                min = mid + 1;
             }
         }
         return false;
     }
 
     @Override
-    public int indexOf(String item) {
-        validationString(item);
+    public int indexOf(Integer item) {
+        validationInteger(item);
 
         for (int i = 0; i < size; i++) {
             if (list[i].equals(item)) {
@@ -112,8 +122,8 @@ public class StringListImpl implements StringList {
     }
 
     @Override
-    public int lastIndexOf(String item) {
-        validationString(item);
+    public int lastIndexOf(Integer item) {
+        validationInteger(item);
 
         for (int i = size; i > 0; i--) {
             if (list[i].equals(item)) {
@@ -124,13 +134,13 @@ public class StringListImpl implements StringList {
     }
 
     @Override
-    public String get(int index) {
+    public Integer get(int index) {
         validationIndex(index);
         return list[index];
     }
 
     @Override
-    public boolean equals(StringList otherList) {
+    public boolean equals(List otherList) {
         if (otherList == null) {
             return false;
         }
@@ -161,18 +171,46 @@ public class StringListImpl implements StringList {
 
     @Override
     public void clear() {
-        this.list = new String[list.length];
+        this.list = new Integer[list.length];
         size = 0;
     }
 
     @Override
-    public String[] toArray() {
-        String[] result = new String[size];
+    public Integer[] toArray() {
+        Integer[] result = new Integer[size];
         System.arraycopy(list, 0, result, 0, size);
         return result;
     }
 
-    private void validationString(String item) {
+    public void sort(Integer[] array, int low, int high) {
+        if (low < high) {
+            int partitionIndex = partition(array, low, high);
+            sort(array, low, partitionIndex - 1);
+            sort(array, partitionIndex + 1, high);
+        }
+    }
+
+    private int partition(Integer[] array, int low, int high) {
+        int pivot = array[high];
+        int i = low;
+
+        for (int j = low; j < high; j++) {
+            if (array[j] <= pivot) {
+                i++;
+                int temp = array[i];
+                array[i] = array[j];
+                array[j] = temp;
+            }
+        }
+        int temp = array[i + 1];
+        array[i + 1] = array[high];
+        array[high] = temp;
+
+        return i + 1;
+    }
+
+
+    private void validationInteger(Integer item) {
         if (item == null) {
             throw new NullPointerException("Sorry! Invalid data transmitted. Field cannot be empty!");
         }
